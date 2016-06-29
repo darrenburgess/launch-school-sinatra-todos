@@ -38,11 +38,12 @@ end
 post "/lists" do
   list_name = params[:list_name].strip
 
-  if error = error_for_list_name(list_name)
+  error = error_for_list_name(list_name)
+  if error
     session[:error] = error
     redirect "/lists/new"
   else
-    session[:lists] << {name: list_name, todos: []}
+    session[:lists] << { name: list_name, todos: [] }
     session[:success] = "The list has been created"
     redirect "/lists"
   end
