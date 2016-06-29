@@ -1,9 +1,14 @@
 <ul id="lists">
+ session[:lists] << { name: "New List", todos: []}
+  redirect "/lists"
   <% @lists.each do |list| %>
     <li>
       <a>
-        <h2><%= list[:name] %><p><%= list[:todos].size %></p></h2>
+        <h2><%= list[:name] %></h2>
+        <p><%= list[:todos].size %></p>
       </a>
     </li>
   <% end %>
 </ul>
+
+<a href="/lists/new">New List</a>
