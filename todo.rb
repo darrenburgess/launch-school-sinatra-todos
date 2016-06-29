@@ -9,6 +9,7 @@ end
 
 before do
   session[:lists] ||= []
+  @lists = session[:lists]
 end
 
 get "/" do
@@ -17,7 +18,6 @@ end
 
 # show all lists
 get "/lists" do
-  @lists = session[:lists]
   erb :lists
 end
 
@@ -29,7 +29,12 @@ end
 # create new list
 post "/lists" do
   list_name = params[:list_name].strip
-  if (1..100).cover? list_name.size
+  lists = []
+  @lists.each {|list| lists << list[:name].to_s }
+  if lists.include? list_name 
+    session[:error] = "List names must be unique"
+    redirect "/lists/new"
+  elsif (1..100).cover? list_name.size
     session[:lists] << {name: list_name, todos: []}
     session[:success] = "The list has been created."
     redirect "/lists"
