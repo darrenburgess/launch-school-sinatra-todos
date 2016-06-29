@@ -15,17 +15,19 @@ get "/" do
   redirect "/lists"
 end
 
+# show all lists
 get "/lists" do
   @lists = session[:lists]
   erb :lists
 end
 
+# render new list form
 get "/lists/new" do
-  erb :new_list#, layout: :layout
+  erb :new_list, layout: :layout
 end
 
+# create new list
 post "/lists" do
   session[:lists] << {name: params[:list_name], todos: []}
-  session.each {|name, value| puts "#{name}: #{value}"}
   redirect "/lists"
 end
