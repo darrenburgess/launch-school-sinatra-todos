@@ -1,6 +1,7 @@
 require "sinatra"
 require "sinatra/reloader"
 require "tilt/erubis"
+require "pry"
 
 configure do
   enable :sessions
@@ -27,6 +28,13 @@ end
 # show all lists
 get "/lists" do
   erb :lists
+end
+
+# show one list
+get "/list/:number" do
+  number = params[:number].to_i
+  @name = @lists[number][:name] 
+  erb :list
 end
 
 # render new list form
