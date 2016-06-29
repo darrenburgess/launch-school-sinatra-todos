@@ -7,6 +7,14 @@ configure do
   set :session_secret, 'secret'
 end
 
+helpers do
+  # return error message if name is invalid, nil if valid
+  def error_for_list_name(name)
+    return "The list name must between 1 and 100 characters" unless (1..100).cover? name.size
+    "The list name must be unique" if @lists.any? { |list| list[:name] == name }
+  end
+end
+
 before do
   session[:lists] ||= []
   @lists = session[:lists]
@@ -24,11 +32,6 @@ end
 # render new list form
 get "/lists/new" do
   erb :new_list, layout: :layout
-end
-
-def error_for_list_name(list_name)
-  return "The list name must between 1 and 100 characters" unless (1..100).cover? list_name.size
-  "The list name must be unique" if @lists.any? { |list| list[:name] == list_name }
 end
 
 # create new list
