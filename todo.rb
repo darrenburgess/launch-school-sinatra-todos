@@ -21,7 +21,7 @@ get "/lists" do
 end
 
 get "/lists/new" do
-  erb :new_list, layout: :layout
+  erb :new_list#, layout: :layout
 end
 
 post "/lists" do
