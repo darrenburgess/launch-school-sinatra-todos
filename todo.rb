@@ -29,9 +29,7 @@ end
 # create new list
 post "/lists" do
   list_name = params[:list_name].strip
-  lists = []
-  @lists.each {|list| lists << list[:name].to_s }
-  if lists.include? list_name 
+  if @lists.any? { |list| list[:name] == list_name }
     session[:error] = "List names must be unique"
     redirect "/lists/new"
   elsif (1..100).cover? list_name.size
