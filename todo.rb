@@ -31,9 +31,9 @@ get "/lists" do
 end
 
 # show one list
-get "/list/:number" do
-  number = params[:number].to_i
-  @name = @lists[number][:name] 
+get "/list/:id" do
+  id = params[:id].to_i
+  @name = @lists[id][:name] 
   erb :list
 end
 
