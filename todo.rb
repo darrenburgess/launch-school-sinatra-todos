@@ -15,6 +15,13 @@ helpers do
     return "The list name must between 1 and 100 characters" unless (1..100).cover? name.size
     "The list name must be unique" if @lists.any? { |list| list[:name] == name }
   end
+
+  def error_for_edit_list(id, name)
+    return "The list name must between 1 and 100 characters" unless (1..100).cover? name.size
+    if @lists.any? { |list| list[:name] == name } && @lists[id][:name] != name
+      "The list name must be unique"
+    end
+  end
 end
 
 before do
@@ -32,28 +39,33 @@ get "/lists" do
 end
 
 # show one list
-get "/list/:id" do
-  id = params[:id].to_i
-  @name = @lists[id][:name] 
+get "/lists/:id" do
+  @id = params[:id].to_i
+  @name = @lists[@id][:name] 
   erb :list
 end
 
 # render edit list form
-get "lists/edit" do
+get "/lists/:id/edit" do
+  @id = params[:id].to_i
+  @name = @lists[@id][:name]
   erb :edit_list, layout: :layout
 end
 
 # save list
-put "lists/:id" do
+post "/lists/:id" do
   id = params[:id].to_i
   list_name = params[:list_name].strip
-  
+  redirect "/lists/#{id}" if @lists[id][:name] == list_name 
+
   error = error_for_list_name(list_name)
   if error
-    session[:error]
-    #redirect?
+    session[:error] = error
+    redirect "/lists/#{id}/edit"
   else
-    #set the value of the key
+    @lists[id][:name] = list_name
+    session[:success] = "The list has been updated"
+    redirect "/lists/#{id}"
   end
 end
 
