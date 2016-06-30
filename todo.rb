@@ -38,6 +38,25 @@ get "/list/:id" do
   erb :list
 end
 
+# render edit list form
+get "lists/edit" do
+  erb :edit_list, layout: :layout
+end
+
+# save list
+put "lists/:id" do
+  id = params[:id].to_i
+  list_name = params[:list_name].strip
+  
+  error = error_for_list_name(list_name)
+  if error
+    session[:error]
+    #redirect?
+  else
+    #set the value of the key
+  end
+end
+
 # render new list form
 get "/lists/new" do
   erb :new_list, layout: :layout
