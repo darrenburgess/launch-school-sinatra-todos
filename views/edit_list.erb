@@ -4,7 +4,7 @@
       <label for="list_name">Change the name for your list:</label>
     </dt>
     <dd>
-      <input name="list_name" placeholder="List Name" type="text" value="<%= @name %>" autofocus="autofocus">
+      <input name="list_name" placeholder="List Name" type="text" value="<%= @submitted_name || @current_list_name %>" autofocus="autofocus">
     </dd>
   </dl>
   <fieldset class="actions">

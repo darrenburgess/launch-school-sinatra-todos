@@ -41,22 +41,26 @@ end
 # render edit list form
 get "/lists/:id/edit" do
   @id = params[:id].to_i
-  @name = @lists[@id][:name]
+  @current_list_name = @lists[@id][:name]
   erb :edit_list, layout: :layout
 end
 
 # save list
 post "/lists/:id" do
   id = params[:id].to_i
-  list_name = params[:list_name].strip
-  redirect "/lists/#{id}" if @lists[id][:name] == list_name 
+  @submitted_name = params[:list_name]
+  @new_list_name = params[:list_name].strip
+  @list = session[:lists][id]
+  @current_list_name = @list[:name]
 
-  error = error_for_list_name(list_name)
+  redirect "/lists/#{id}" if @current_list_name == @new_list_name 
+
+  error = error_for_list_name(@new_list_name)
   if error
     session[:error] = error
-    redirect "/lists/#{id}/edit"
+    erb :edit_list, layout: :layout
   else
-    @lists[id][:name] = list_name
+    @list[:name] = @new_list_name
     session[:success] = "The list has been updated"
     redirect "/lists/#{id}"
   end
@@ -64,6 +68,7 @@ end
 
 # render new list form
 get "/lists/new" do
+  binding.pry
   erb :new_list, layout: :layout
 end
 
