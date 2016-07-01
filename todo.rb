@@ -71,6 +71,12 @@ post "/lists/:id" do
   end
 end
 
+get "/lists/:id/delete" do
+  id = params[:id].to_i
+  @lists.delete_at(id)
+  session[:success] = "The list was deleted"
+  redirect :lists, layout: :layout
+end
 
 # create new list
 post "/lists" do

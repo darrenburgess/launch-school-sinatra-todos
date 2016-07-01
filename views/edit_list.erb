@@ -1,3 +1,10 @@
+<section id="todos">
+  <header>
+    <h2><%= @current_list_name %></h2>
+    <ul><li><a class="delete" href="/lists/<%= @id %>/delete">Delete List</a></li></ul>
+  </header>
+</section>
+
 <form action="/lists/<%= @id %>" method="post">
   <dl>
     <dt>
