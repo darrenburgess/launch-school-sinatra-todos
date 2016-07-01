@@ -31,6 +31,11 @@ get "/lists" do
   erb :lists
 end
 
+# render new list form
+get "/lists/new" do
+  erb :new_list, layout: :layout
+end
+
 # show one list
 get "/lists/:id" do
   @id = params[:id].to_i
@@ -66,11 +71,6 @@ post "/lists/:id" do
   end
 end
 
-# render new list form
-get "/lists/new" do
-  binding.pry
-  erb :new_list, layout: :layout
-end
 
 # create new list
 post "/lists" do
