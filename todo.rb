@@ -15,13 +15,6 @@ helpers do
     return "The list name must between 1 and 100 characters" unless (1..100).cover? name.size
     "The list name must be unique" if @lists.any? { |list| list[:name] == name }
   end
-
-  def error_for_edit_list(id, name)
-    return "The list name must between 1 and 100 characters" unless (1..100).cover? name.size
-    if @lists.any? { |list| list[:name] == name } && @lists[id][:name] != name
-      "The list name must be unique"
-    end
-  end
 end
 
 before do
