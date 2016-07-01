@@ -71,7 +71,7 @@ post "/lists/:id" do
   end
 end
 
-get "/lists/:id/delete" do
+post "/lists/:id/destroy" do
   id = params[:id].to_i
   @lists.delete_at(id)
   session[:success] = "The list was deleted"

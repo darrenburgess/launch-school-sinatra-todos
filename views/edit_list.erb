@@ -1,7 +1,15 @@
 <section id="todos">
   <header>
-    <h2><%= @current_list_name %></h2>
-    <ul><li><a class="delete" href="/lists/<%= @id %>/delete">Delete List</a></li></ul>
+    <h2>Editing: <%= @current_list_name %></h2>
+    <ul>
+      <li>
+        <form action="/lists/<%= @id %>/destroy" method="post">
+          <button class="delete">
+            Delete List
+          </button>
+        </form>
+      </li>
+    </ul>
   </header>
 </section>
 
