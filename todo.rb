@@ -30,6 +30,7 @@ before do
   @lists = session[:lists]
 end
 
+# home
 get "/" do
   redirect "/lists"
 end
@@ -113,7 +114,7 @@ post "/lists" do
   end
 end
 
-# create new todo to a list 
+# create new todo for a list 
 post "/lists/:list_id/todos" do
   @todo = params[:todo].strip
   @list_id = params[:list_id].to_i
