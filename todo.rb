@@ -109,11 +109,12 @@ post "/lists/:list_id/todos" do
   list_id = params[:list_id].to_i
   
   @list = session[:lists][list_id]
+  @todos = @list[:todos]
  
   error = error_for_todo_name(@todo)
   if error
     session[:error] = error
-    redirect "/lists/#{list_id}"
+    erb :list, layout: :layout
   else
     @list[:todos] << {name: @todo, completed: false} 
     @todos = @list[:todos]
