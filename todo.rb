@@ -15,14 +15,13 @@ helpers do
   end
 
   # return error message if name is invalid, nil if valid
-  def error_for_list_name(name)
+  def error_for_list(name)
     return "The name must between 1 and 100 characters" unless size_in_range(name)
     "The list name must be unique" if @lists.any? { |list| list[:name] == name }
   end
 
-  def error_for_todo_name(name)
-    return "The todo name must between 1 and 100 characters" unless size_in_range(name)
-    "The todo name must be unique" if @list[:todos].any? { |todo| todo[:name] == name }
+  def error_for_todo(name)
+    "The todo name must between 1 and 100 characters" unless size_in_range(name)
   end
 end
 
@@ -70,7 +69,7 @@ post "/lists/:id" do
 
   redirect "/lists/#{id}" if @current_list_name == @new_list_name 
 
-  error = error_for_list_name(@new_list_name)
+  error = error_for_list(@new_list_name)
   if error
     session[:error] = error
     erb :edit_list, layout: :layout
@@ -92,7 +91,7 @@ end
 post "/lists" do
   list_name = params[:list_name].strip
 
-  error = error_for_list_name(list_name)
+  error = error_for_list(list_name)
   if error
     session[:error] = error
     redirect "/lists/new"
