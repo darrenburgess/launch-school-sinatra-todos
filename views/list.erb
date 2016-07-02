@@ -1,7 +1,7 @@
 <section id="todos">
   <header>
     <h2><%= @name %></h2>
-    <ul><li><a class="edit" href="/lists/<%= @id %>/edit">Edit List</a></li></ul>
+    <ul><li><a class="edit" href="/lists/<%= @list_id %>/edit">Edit List</a></li></ul>
   </header>
 
   <ul>
@@ -14,13 +14,13 @@
   </ul>
 </section>
 
-<form action="/lists/:id/todos" method="post">
+<form action="/lists/<%= @list_id %>/todos" method="post">
   <dl>
     <dt>
       <label for="todo">Enter a new todo item:</label>
     </dt>
     <dd>
-      <input name="todo" placeholder="Something to do" type="text" value="" autofocus="autofocus">
+    <input name="todo" placeholder="Something to do" type="text" value="<%= params[:todo] %>" autofocus="autofocus">
     </dd>
   </dl>
   <fieldset class="actions">

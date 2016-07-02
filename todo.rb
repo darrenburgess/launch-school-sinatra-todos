@@ -46,9 +46,9 @@ end
 
 # show one list
 get "/lists/:id" do
-  @id = params[:id].to_i
-  @name = @lists[@id][:name]
-  @todos = @lists[@id][:todos]
+  @list_id = params[:id].to_i
+  @name = @lists[@list_id][:name]
+  @todos = @lists[@list_id][:todos]
   erb :list
 end
 
@@ -105,12 +105,13 @@ end
 # create new todo to a list 
 post "/lists/:list_id/todos" do
   @todo = params[:todo].strip
-  list_id = params[:list_id].to_i
+  @list_id = params[:list_id].to_i
   
-  @list = session[:lists][list_id]
+  @list = session[:lists][@list_id]
   @todos = @list[:todos]
+  @name = @list[:name]
  
-  error = error_for_todo_name(@todo)
+  error = error_for_todo(@todo)
   if error
     session[:error] = error
     erb :list, layout: :layout
@@ -118,6 +119,6 @@ post "/lists/:list_id/todos" do
     @list[:todos] << {name: @todo, completed: false} 
     @todos = @list[:todos]
     session[:success] = "The todo has been created"
-    redirect "/lists/#{list_id}"
+    redirect "/lists/#{@list_id}"
   end
 end
