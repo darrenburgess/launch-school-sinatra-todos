@@ -80,12 +80,23 @@ post "/lists/:id" do
   end
 end
 
+# delete list
 post "/lists/:id/destroy" do
   id = params[:id].to_i
   @lists.delete_at(id)
   session[:success] = "The list was deleted"
   redirect "/lists"
 end
+
+# delete todo
+post "/lists/:list_id/todos/:todo_id/destroy" do
+  list_id = params[:list_id].to_i
+  todo_id = params[:todo_id].to_i
+  @lists[list_id][:todos].delete_at(todo_id)
+  session[:success] = "The todo was deleted"
+  redirect "/lists/#{list_id}"
+end
+
 
 # create new list
 post "/lists" do
