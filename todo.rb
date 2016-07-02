@@ -61,10 +61,10 @@ end
 
 # save list
 post "/lists/:id" do
-  id = params[:id].to_i
+  @id = params[:id].to_i
   @submitted_name = params[:list_name]
   @new_list_name = params[:list_name].strip
-  @list = session[:lists][id]
+  @list = session[:lists][@id]
   @current_list_name = @list[:name]
 
   redirect "/lists/#{id}" if @current_list_name == @new_list_name 
@@ -76,7 +76,7 @@ post "/lists/:id" do
   else
     @list[:name] = @new_list_name
     session[:success] = "The list has been updated"
-    redirect "/lists/#{id}"
+    redirect "/lists/#{@id}"
   end
 end
 
