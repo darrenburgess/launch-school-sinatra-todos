@@ -10,10 +10,19 @@ configure do
 end
 
 helpers do
+  def size_in_range(name)
+    (1..100).cover? name.size
+  end
+
   # return error message if name is invalid, nil if valid
   def error_for_list_name(name)
-    return "The list name must between 1 and 100 characters" unless (1..100).cover? name.size
+    return "The name must between 1 and 100 characters" unless size_in_range(name)
     "The list name must be unique" if @lists.any? { |list| list[:name] == name }
+  end
+
+  def error_for_todo_name(name)
+    return "The todo name must between 1 and 100 characters" unless size_in_range(name)
+    "The todo name must be unique" if @list[:todos].any? { |todo| todo[:name] == name }
   end
 end
 
@@ -96,17 +105,17 @@ end
 
 # create new todo to a list 
 post "/lists/:list_id/todos" do
-  todo = params[:todo].strip
+  @todo = params[:todo].strip
   list_id = params[:list_id].to_i
   
   @list = session[:lists][list_id]
  
-  error = nil
+  error = error_for_todo_name(@todo)
   if error
     session[:error] = error
-    redirect "/list/#{list_id}"
+    redirect "/lists/#{list_id}"
   else
-    @list[:todos] << {name: todo, completed: false} 
+    @list[:todos] << {name: @todo, completed: false} 
     @todos = @list[:todos]
     session[:success] = "The todo has been created"
     redirect "/lists/#{list_id}"
