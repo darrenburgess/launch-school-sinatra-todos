@@ -6,7 +6,7 @@
 
   <ul>
     <% @todos.each_with_index do |todo, index| %>
-      <li class="<%= todo[:completed] ? 'complete' : '' %>">
+      <li<%= todo[:completed] ? " class='complete'" : '' %>>
 
         <form action="/lists/<%= @list_id%>/todos/<%= index %>/update" method="post" class="check">
           <input type="hidden" name="completed" value="<%= !todo[:completed] %>" />
