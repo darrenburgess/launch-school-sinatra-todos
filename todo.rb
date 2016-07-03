@@ -96,13 +96,14 @@ post "/lists/:list_id/todos/:todo_id/update" do
   redirect "/lists/#{@list_id}"
 end
 
-# mark all todos complete
-post "/lists/:list_id/update_all" do
-  @list_id = params[:list_id].to_i
+# mark all todos complete/uncomplete
+post "/lists/:id/complete_all" do
+  @list_id = params[:id].to_i
   @list = @lists[@list_id]
 
   @list[:todos].each { |todo| todo[:completed] = !todo[:completed] }
 
+  session[:success] = "All todos have been updated"
   redirect "/lists/#{@list_id}"
 end
 
