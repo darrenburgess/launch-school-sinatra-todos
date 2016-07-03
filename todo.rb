@@ -96,6 +96,16 @@ post "/lists/:list_id/todos/:todo_id/update" do
   redirect "/lists/#{@list_id}"
 end
 
+# mark all todos complete
+post "/lists/:list_id/update_all" do
+  @list_id = params[:list_id].to_i
+  @list = @lists[@list_id]
+
+  @list[:todos].each { |todo| todo[:completed] = !todo[:completed] }
+
+  redirect "/lists/#{@list_id}"
+end
+
 # delete list
 post "/lists/:id/destroy" do
   id = params[:id].to_i
