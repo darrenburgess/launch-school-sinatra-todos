@@ -50,7 +50,7 @@ get "/lists/:id" do
   @list_id = params[:id].to_i
   @name = @lists[@list_id][:name]
   @todos = @lists[@list_id][:todos]
-  erb :list
+  erb :list, layout: :layout 
 end
 
 # render edit list form
@@ -79,6 +79,19 @@ post "/lists/:id" do
     session[:success] = "The list has been updated"
     redirect "/lists/#{@id}"
   end
+end
+
+# todo mark as completed true or completed false
+post "/lists/:list_id/todos/:todo_id/update" do
+  @list_id = params[:list_id].to_i
+  todo_id = params[:todo_id].to_i
+
+  @list = @lists[@list_id]
+  @name = @list[:name]
+  @todos = @list[:todos]
+
+  @todos[todo_id][:completed] = !@todos[todo_id][:completed]
+  erb :list, layout: :layout
 end
 
 # delete list
