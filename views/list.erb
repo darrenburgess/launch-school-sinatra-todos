@@ -9,7 +9,7 @@
       <li class="<%= todo[:completed] ? 'complete' : '' %>">
 
         <form action="/lists/<%= @list_id%>/todos/<%= index %>/update" method="post" class="check">
-          <input type="hidden" name="completed" value="" />
+          <input type="hidden" name="completed" value="<%= !todo[:completed] %>" />
           <button type="submit">Complete</button>
         </form>
 

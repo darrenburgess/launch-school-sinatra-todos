@@ -90,8 +90,10 @@ post "/lists/:list_id/todos/:todo_id/update" do
   @name = @list[:name]
   @todos = @list[:todos]
 
-  @todos[todo_id][:completed] = !@todos[todo_id][:completed]
-  erb :list, layout: :layout
+  is_completed = params[:completed] == "true"
+  @todos[todo_id][:completed] = is_completed
+
+  redirect "/lists/#{@list_id}"
 end
 
 # delete list
