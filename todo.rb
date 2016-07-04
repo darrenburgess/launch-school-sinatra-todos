@@ -106,9 +106,10 @@ end
 # save list
 post "/lists/:id" do
   @id = params[:id].to_i
+  @list = load_list(@id)
+
   @submitted_name = params[:list_name]
   @new_list_name = params[:list_name].strip
-  @list = session[:lists][@id]
   @current_list_name = @list[:name]
 
   redirect "/lists/#{id}" if @current_list_name == @new_list_name 
