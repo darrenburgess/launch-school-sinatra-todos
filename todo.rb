@@ -14,7 +14,6 @@ helpers do
     (1..100).cover? name.size
   end
 
-  # return error message if name is invalid, nil if valid
   def error_for_list(name)
     return "The name must between 1 and 100 characters" unless size_in_range(name)
     "The list name must be unique" if @lists.any? { |list| list[:name] == name }
@@ -25,11 +24,7 @@ helpers do
   end
 
   def complete?(list)
-    if list[:todos].all? { |todo| todo[:completed] } && count_total_todos(list) > 0
-      " class='complete'"
-    else
-      ""
-    end
+    list[:todos].all? { |todo| todo[:completed] } && count_total_todos(list) > 0
   end
 
   def count_completed_todos(list)
@@ -38,6 +33,10 @@ helpers do
 
   def count_total_todos(list)
     list[:todos].count
+  end
+
+  def list_class(list)
+    "complete" if complete? list
   end
 end
 
