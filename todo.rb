@@ -24,11 +24,11 @@ helpers do
   end
 
   def complete?(list)
-    list[:todos].all? { |todo| todo[:completed] } && count_total_todos(list) > 0
+    count_remaining_todos(list) == 0 && count_total_todos(list) > 0
   end
 
-  def count_completed_todos(list)
-    list[:todos].count { |todo| todo[:completed]}
+  def count_remaining_todos(list)
+    list[:todos].count { |todo| !todo[:completed]}
   end
 
   def count_total_todos(list)
@@ -159,11 +159,11 @@ end
 post "/lists/:list_id/todos" do
   @todo = params[:todo].strip
   @list_id = params[:list_id].to_i
-  
+
   @list = session[:lists][@list_id]
   @todos = @list[:todos]
   @name = @list[:name]
- 
+
   error = error_for_todo(@todo)
   if error
     session[:error] = error

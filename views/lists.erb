@@ -3,7 +3,10 @@
     <li class="<%= list_class(list) %>">
       <a href="/lists/<%= index %>">
         <h2><%= list[:name] %></h2>
-        <p><%= count_completed_todos(list).to_s + "/" + count_total_todos(list).to_s %></p>
+        <p>
+          <%= count_remaining_todos(list) %> / 
+          <%= count_total_todos(list) %>
+        </p>
       </a>
       </li>
   <% end %>
