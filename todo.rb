@@ -38,6 +38,23 @@ helpers do
   def list_class(list)
     "complete" if complete? list
   end
+
+  def sort_lists(lists, &block)
+    incomplete_lists = {}
+    complete_lists = {}
+
+    lists.each_with_index do |list, index|
+      if complete?(list)
+        complete_lists[index] = list
+      else
+        incomplete_lists[index] = list
+      end
+
+    end
+
+    all_lists = incomplete_lists.merge(complete_lists)
+    all_lists.each { |id, list| yield list, id }
+  end
 end
 
 before do
