@@ -24,8 +24,12 @@ helpers do
     "The todo name must between 1 and 100 characters" unless size_in_range(name)
   end
 
-  def list_complete?(list)
-    list[:todos].all? { |todo| todo[:completed] } && count_total_todos(list) > 0
+  def complete?(list)
+    if list[:todos].all? { |todo| todo[:completed] } && count_total_todos(list) > 0
+      " class='complete'"
+    else
+      ""
+    end
   end
 
   def count_completed_todos(list)
@@ -60,6 +64,7 @@ end
 # show one list
 get "/lists/:id" do
   @list_id = params[:id].to_i
+  @list = @lists[@list_id]
   @name = @lists[@list_id][:name]
   @todos = @lists[@list_id][:todos]
   erb :list, layout: :layout 
@@ -136,7 +141,6 @@ post "/lists/:list_id/todos/:todo_id/destroy" do
   redirect "/lists/#{list_id}"
 end
 
-
 # create new list
 post "/lists" do
   list_name = params[:list_name].strip
@@ -172,3 +176,14 @@ post "/lists/:list_id/todos" do
     redirect "/lists/#{@list_id}"
   end
 end
+
+# completed lists
+# conditions for list complete:
+#   must have todos
+#   all todos are complete
+#     list should have class complete
+#       on list of lists
+#       and on list page (to section class)
+# first number: remaining todos   second number name total todos
+# use helper methods as much as possible to avoid putting login in the view templates
+#
