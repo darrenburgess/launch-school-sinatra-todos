@@ -2,6 +2,7 @@ require "sinatra"
 require "sinatra/reloader" if development?
 require "sinatra/content_for"
 require "tilt/erubis"
+require "pry" if development?
 
 configure do
   enable :sessions
@@ -78,9 +79,14 @@ end
 get "/lists/:id" do
   @list_id = params[:id].to_i
   @list = @lists[@list_id]
-  @name = @lists[@list_id][:name]
-  @todos = @lists[@list_id][:todos]
-  erb :list, layout: :layout 
+  if @list
+    @name = @lists[@list_id][:name]
+    @todos = @lists[@list_id][:todos]
+    erb :list, layout: :layout 
+  else
+    session[:error] = "That list does not exist!"
+    erb :lists, layout: :layout
+  end
 end
 
 # render edit list form
