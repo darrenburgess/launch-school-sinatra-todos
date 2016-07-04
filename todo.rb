@@ -40,35 +40,17 @@ helpers do
   end
 
   def sort_lists(lists, &block)
-    incomplete_lists = {}
-    complete_lists = {}
+    complete_lists, incomplete_lists = lists.partition { |list| complete?(list) }
 
-    lists.each_with_index do |list, index|
-      if complete?(list)
-        complete_lists[list] = index
-      else
-        incomplete_lists[list] = index 
-      end
-    end
-
-    all_lists = incomplete_lists.merge(complete_lists)
-    all_lists.each(&block)
+    all_lists = incomplete_lists + complete_lists
+    all_lists.each { |list| yield list, lists.index(list) }
   end
 
   def sort_todos(todos, &block)
-    incomplete_todos = {}
-    complete_todos = {}
+    complete_todos, incomplete_todos = todos.partition { |todo| todo[:completed] }
     
-    todos.each_with_index do |todo, index|
-      if todo[:completed]
-        complete_todos[todo] = index
-      else
-        incomplete_todos[todo] = index
-      end
-    end
-
-    all_todos = incomplete_todos.merge(complete_todos)
-    all_todos.each(&block)
+    all_todos = incomplete_todos + complete_todos
+    all_todos.each { |todo| yield todo, todos.index(todo) }
   end
 end
 
