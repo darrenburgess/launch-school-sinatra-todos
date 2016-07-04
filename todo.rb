@@ -97,7 +97,9 @@ end
 # render edit list form
 get "/lists/:id/edit" do
   @id = params[:id].to_i
-  @current_list_name = @lists[@id][:name]
+  list = load_list(@id)
+
+  @current_list_name = list[:name]
   erb :edit_list, layout: :layout
 end
 
