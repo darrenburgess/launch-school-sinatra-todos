@@ -14,7 +14,7 @@
   </header>
 
   <ul>
-    <% @todos.each_with_index do |todo, index| %>
+    <% sort_todos(@todos) do |todo, index| %>
       <li<%= todo[:completed] ? " class='complete'" : '' %>>
 
         <form action="/lists/<%= @list_id%>/todos/<%= index %>/update" method="post" class="check">

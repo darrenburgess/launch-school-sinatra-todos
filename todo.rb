@@ -49,11 +49,26 @@ helpers do
       else
         incomplete_lists[list] = index 
       end
-
     end
 
     all_lists = incomplete_lists.merge(complete_lists)
     all_lists.each(&block)
+  end
+
+  def sort_todos(todos, &block)
+    incomplete_todos = {}
+    complete_todos = {}
+    
+    todos.each_with_index do |todo, index|
+      if todo[:completed]
+        complete_todos[todo] = index
+      else
+        incomplete_todos[todo] = index
+      end
+    end
+
+    all_todos = incomplete_todos.merge(complete_todos)
+    all_todos.each(&block)
   end
 end
 
