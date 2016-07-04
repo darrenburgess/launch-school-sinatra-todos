@@ -37,7 +37,7 @@ helpers do
   end
 
   def count_total_todos(list)
-    list[:todos].size
+    list[:todos].count
   end
 end
 
@@ -176,14 +176,3 @@ post "/lists/:list_id/todos" do
     redirect "/lists/#{@list_id}"
   end
 end
-
-# completed lists
-# conditions for list complete:
-#   must have todos
-#   all todos are complete
-#     list should have class complete
-#       on list of lists
-#       and on list page (to section class)
-# first number: remaining todos   second number name total todos
-# use helper methods as much as possible to avoid putting login in the view templates
-#

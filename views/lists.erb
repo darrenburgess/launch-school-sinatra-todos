@@ -3,7 +3,7 @@
     <li<%= complete?(list) %>>
       <a href="/lists/<%= index %>">
         <h2><%= list[:name] %></h2>
-        <p><%= list[:todos].size %></p>
+        <p><%= count_completed_todos(list).to_s + "/" + count_total_todos(list).to_s %></p>
       </a>
     </li>
   <% end %>
