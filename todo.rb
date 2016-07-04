@@ -23,6 +23,18 @@ helpers do
   def error_for_todo(name)
     "The todo name must between 1 and 100 characters" unless size_in_range(name)
   end
+
+  def list_complete?(list)
+    list[:todos].all? { |todo| todo[:completed] } && count_total_todos(list) > 0
+  end
+
+  def count_completed_todos(list)
+    list[:todos].count { |todo| todo[:completed]}
+  end
+
+  def count_total_todos(list)
+    list[:todos].size
+  end
 end
 
 before do
