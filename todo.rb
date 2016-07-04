@@ -130,7 +130,7 @@ post "/lists/:list_id/todos/:todo_id/update" do
   @list_id = params[:list_id].to_i
   todo_id = params[:todo_id].to_i
 
-  @list = @lists[@list_id]
+  @list = load_list(@list_id)
   @name = @list[:name]
   @todos = @list[:todos]
 
@@ -143,7 +143,7 @@ end
 # mark all todos complete/uncomplete
 post "/lists/:id/complete_all" do
   @list_id = params[:id].to_i
-  @list = @lists[@list_id]
+  @list = load_list(@list_id)
 
   @list[:todos].each { |todo| todo[:completed] = !todo[:completed] }
 
@@ -154,6 +154,8 @@ end
 # delete list
 post "/lists/:id/destroy" do
   id = params[:id].to_i
+  @list = load_list(id)
+
   @lists.delete_at(id)
   session[:success] = "The list was deleted"
   redirect "/lists"
@@ -163,6 +165,9 @@ end
 post "/lists/:list_id/todos/:todo_id/destroy" do
   list_id = params[:list_id].to_i
   todo_id = params[:todo_id].to_i
+
+  @list = load_list(list_id)
+
   @lists[list_id][:todos].delete_at(todo_id)
   session[:success] = "The todo was deleted"
   redirect "/lists/#{list_id}"
@@ -188,7 +193,7 @@ post "/lists/:list_id/todos" do
   @todo = params[:todo].strip
   @list_id = params[:list_id].to_i
 
-  @list = session[:lists][@list_id]
+  @list = load_list(@list_id)
   @todos = @list[:todos]
   @name = @list[:name]
 
