@@ -45,15 +45,15 @@ helpers do
 
     lists.each_with_index do |list, index|
       if complete?(list)
-        complete_lists[index] = list
+        complete_lists[list] = index
       else
-        incomplete_lists[index] = list
+        incomplete_lists[list] = index 
       end
 
     end
 
     all_lists = incomplete_lists.merge(complete_lists)
-    all_lists.each { |id, list| yield list, id }
+    all_lists.each(&block)
   end
 end
 
