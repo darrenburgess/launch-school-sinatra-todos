@@ -60,6 +60,14 @@ before do
   @lists = session[:lists]
 end
 
+def load_list(index)
+  list = session[:lists][index] if index
+  return list if list
+
+  session[:error] = "The specified list was not found"
+  redirect "/lists"
+end
+
 # home
 get "/" do
   redirect "/lists"
@@ -78,15 +86,12 @@ end
 # show one list
 get "/lists/:id" do
   @list_id = params[:id].to_i
-  @list = @lists[@list_id]
-  if @list
-    @name = @lists[@list_id][:name]
-    @todos = @lists[@list_id][:todos]
-    erb :list, layout: :layout 
-  else
-    session[:error] = "That list does not exist!"
-    erb :lists, layout: :layout
-  end
+  @list = load_list(@list_id)
+
+  @name = @list[:name]
+  @todos = @list[:todos]
+
+  erb :list, layout: :layout
 end
 
 # render edit list form
