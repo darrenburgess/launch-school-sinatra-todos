@@ -203,10 +203,6 @@ post "/lists" do
   end
 end
 
-def next_todo_id(todos)
-  todos.map { |todo| todo[:id] }.max.to_i + 1
-end
-
 # create new todo for a list 
 post "/lists/:list_id/todos" do
   @todo = params[:todo].strip
@@ -222,7 +218,7 @@ post "/lists/:list_id/todos" do
     erb :list, layout: :layout
   else
 
-    id = next_todo_id(@todos)
+    id = next_id(@todos)
 
     @list[:todos] << { id: id, name: @todo, completed: false} 
     @todos = @list[:todos]
