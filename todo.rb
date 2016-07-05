@@ -156,7 +156,7 @@ end
 post "/lists/:id/destroy" do
   id = params[:id].to_i
   @list = load_list(id)
-  @lists.delete_at(id)
+  @lists.reject! { |list| list[:id] == id }
 
   if env["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest"
     "/lists"
