@@ -60,8 +60,8 @@ before do
   @lists = session[:lists]
 end
 
-def load_list(index)
-  list = session[:lists][index] if index
+def load_list(id)
+  list = @lists.select { |list| list[:id] == id }.first if id
   return list if list
 
   session[:error] = "The specified list was not found"
