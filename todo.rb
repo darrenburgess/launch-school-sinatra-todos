@@ -135,7 +135,8 @@ post "/lists/:list_id/todos/:todo_id/update" do
   @todos = @list[:todos]
 
   is_completed = params[:completed] == "true"
-  @todos[todo_id][:completed] = is_completed
+  todo = @todos.find { |todo| todo[:id] == todo_id }
+  todo[:completed] = is_completed
 
   redirect "/lists/#{@list_id}"
 end
@@ -171,7 +172,7 @@ post "/lists/:list_id/todos/:todo_id/destroy" do
   todo_id = params[:todo_id].to_i
 
   @list = load_list(list_id)
-  @lists[list_id][:todos].delete_at(todo_id)
+  @list[:todos].reject! { |todo| todo[:id] == todo_id }
 
   if env["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest"
     status 204
@@ -196,6 +197,10 @@ post "/lists" do
   end
 end
 
+def next_todo_id(todos)
+  todos.map { |todo| todo[:id] }.max.to_i + 1
+end
+
 # create new todo for a list 
 post "/lists/:list_id/todos" do
   @todo = params[:todo].strip
@@ -210,7 +215,10 @@ post "/lists/:list_id/todos" do
     session[:error] = error
     erb :list, layout: :layout
   else
-    @list[:todos] << {name: @todo, completed: false} 
+
+    id = next_todo_id(@todos)
+
+    @list[:todos] << { id: id, name: @todo, completed: false} 
     @todos = @list[:todos]
     session[:success] = "The todo has been created"
     redirect "/lists/#{@list_id}"
