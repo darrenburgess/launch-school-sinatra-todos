@@ -183,8 +183,8 @@ post "/lists/:list_id/todos/:todo_id/destroy" do
 end
 
 # derive next id for create new list
-def next_list_id(lists)
-  lists.map { |list| list[:id] }.max.to_i + 1
+def next_id(items)
+  items.map { |item| item[:id] }.max.to_i + 1
 end
 
 # create new list
@@ -196,7 +196,7 @@ post "/lists" do
     session[:error] = error
     redirect "/lists/new"
   else
-    id = next_list_id(@lists)
+    id = next_id(@lists)
     session[:lists] << { id: id, name: list_name, todos: [] }
     session[:success] = "The list has been created"
     redirect "/lists"
