@@ -182,7 +182,7 @@ post "/lists/:list_id/todos/:todo_id/destroy" do
   end
 end
 
-# derive next id for create new list
+# derive next id for list of items
 def next_id(items)
   items.map { |item| item[:id] }.max.to_i + 1
 end
