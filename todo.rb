@@ -17,7 +17,7 @@ helpers do
 
   def error_for_list(name)
     return "The name must between 1 and 100 characters" unless size_in_range(name)
-    "The list name must be unique" if @lists.any? { |list| list[:name] == name }
+    "The list name must be unique" if @storage.all_lists.any? { |list| list[:name] == name }
   end
 
   def error_for_todo(name)
@@ -56,12 +56,28 @@ helpers do
 end
 
 before do
-  session[:lists] ||= []
-  @lists = session[:lists]
+  @storage = SessionPersistence.new(session)
+  @lists = @storage.instance_variable_get("@lists")
+end
+
+class SessionPersistence
+  def initialize(session)
+    @session = session
+    @session[:lists] ||= []
+    @lists = @session[:lists]
+  end
+
+  def find_list(id)
+    @session[:lists].select { |list| list[:id] == id }.first if id
+  end
+
+  def all_lists
+    @session[:lists]
+  end
 end
 
 def load_list(id)
-  list = @lists.select { |list| list[:id] == id }.first if id
+  list = @storage.find_list(id)
   return list if list
 
   session[:error] = "The specified list was not found"
