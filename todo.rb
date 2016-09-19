@@ -57,7 +57,6 @@ end
 
 before do
   @storage = SessionPersistence.new(session)
-  @lists = @storage.instance_variable_get("@lists")
 end
 
 class SessionPersistence
@@ -73,6 +72,48 @@ class SessionPersistence
 
   def all_lists
     @session[:lists]
+  end
+
+  def create_list(name)
+    id = next_id(all_lists)
+    all_lists << { id: id, name: name, todos: [] }
+  end
+
+  def update_list_name(id, new_name)
+    list = find_list(id)
+    list[:name] = new_name
+  end
+
+  def change_todo_status(list_id, todo_id)
+    list = find_list(list_id)
+    todo = list[:todos].find { |t| t[:id] == todo_id }
+    todo[:completed] = todo[:completed] == true ? false : true
+  end
+
+  def complete_all_todos(list_id)
+    list = find_list(list_id)
+    list[:todos].each { |todo| todo[:completed] = true }
+  end
+
+  def delete_list(id)
+    @lists.reject! { |list| list[:id] == id }
+  end
+
+  def create_todo(list_id, todo)
+    list = find_list(list_id)
+    id = next_id(list[:todos])
+    list[:todos] << { id: id, name: todo, completed: false} 
+  end
+
+  def delete_todo(list_id, todo_id)
+    list = find_list(list_id)
+    list[:todos].reject! { |todo| todo[:id] == todo_id }
+  end
+
+  private
+
+  def next_id(items)
+    items.map { |item| item[:id] }.max.to_i + 1
   end
 end
 
@@ -91,6 +132,7 @@ end
 
 # show all lists
 get "/lists" do
+  @lists = @storage.all_lists
   erb :lists
 end
 
@@ -119,23 +161,23 @@ get "/lists/:id/edit" do
   erb :edit_list, layout: :layout
 end
 
-# save list
+# save list name
 post "/lists/:id" do
   @id = params[:id].to_i
-  @list = load_list(@id)
+  list = load_list(@id)
 
   @submitted_name = params[:list_name]
   @new_list_name = params[:list_name].strip
-  @current_list_name = @list[:name]
+  @current_list_name = list[:name]
 
-  redirect "/lists/#{id}" if @current_list_name == @new_list_name 
+  redirect "/lists/#{@id}" if @current_list_name == @new_list_name 
 
   error = error_for_list(@new_list_name)
   if error
     session[:error] = error
     erb :edit_list, layout: :layout
   else
-    @list[:name] = @new_list_name
+    @storage.update_list_name(@id, @new_list_name)
     session[:success] = "The list has been updated"
     redirect "/lists/#{@id}"
   end
@@ -150,19 +192,16 @@ post "/lists/:list_id/todos/:todo_id/update" do
   @name = @list[:name]
   @todos = @list[:todos]
 
-  is_completed = params[:completed] == "true"
-  todo = @todos.find { |todo| todo[:id] == todo_id }
-  todo[:completed] = is_completed
+  @storage.change_todo_status(@list_id, todo_id)
 
   redirect "/lists/#{@list_id}"
 end
 
-# mark all todos complete/uncomplete
+# mark all todos complete
 post "/lists/:id/complete_all" do
   @list_id = params[:id].to_i
-  @list = load_list(@list_id)
 
-  @list[:todos].each { |todo| todo[:completed] = !todo[:completed] }
+  @storage.complete_all_todos(@list_id)
 
   session[:success] = "All todos have been updated"
   redirect "/lists/#{@list_id}"
@@ -171,8 +210,8 @@ end
 # delete list
 post "/lists/:id/destroy" do
   id = params[:id].to_i
-  @list = load_list(id)
-  @lists.reject! { |list| list[:id] == id }
+
+  @storage.delete_list(id)
 
   if env["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest"
     "/lists"
@@ -187,8 +226,7 @@ post "/lists/:list_id/todos/:todo_id/destroy" do
   list_id = params[:list_id].to_i
   todo_id = params[:todo_id].to_i
 
-  @list = load_list(list_id)
-  @list[:todos].reject! { |todo| todo[:id] == todo_id }
+  @storage.delete_todo(list_id, todo_id)
 
   if env["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest"
     status 204
@@ -198,22 +236,16 @@ post "/lists/:list_id/todos/:todo_id/destroy" do
   end
 end
 
-# derive next id for list of items
-def next_id(items)
-  items.map { |item| item[:id] }.max.to_i + 1
-end
-
 # create new list
 post "/lists" do
-  list_name = params[:list_name].strip
+  name = params[:list_name].strip
 
-  error = error_for_list(list_name)
+  error = error_for_list(name)
   if error
     session[:error] = error
     redirect "/lists/new"
   else
-    id = next_id(@lists)
-    session[:lists] << { id: id, name: list_name, todos: [] }
+    @storage.create_list(name)
     session[:success] = "The list has been created"
     redirect "/lists"
   end
@@ -221,23 +253,19 @@ end
 
 # create new todo for a list 
 post "/lists/:list_id/todos" do
-  @todo = params[:todo].strip
+  todo = params[:todo].strip
   @list_id = params[:list_id].to_i
 
-  @list = load_list(@list_id)
-  @todos = @list[:todos]
-  @name = @list[:name]
+  list = load_list(@list_id)
+  @todos = list[:todos]
+  @name = list[:name]
 
-  error = error_for_todo(@todo)
+  error = error_for_todo(todo)
   if error
     session[:error] = error
     erb :list, layout: :layout
   else
-
-    id = next_id(@todos)
-
-    @list[:todos] << { id: id, name: @todo, completed: false} 
-    @todos = @list[:todos]
+    @storage.create_todo(@list_id, todo)
     session[:success] = "The todo has been created"
     redirect "/lists/#{@list_id}"
   end
