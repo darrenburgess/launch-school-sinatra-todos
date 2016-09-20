@@ -58,7 +58,7 @@ helpers do
 end
 
 before do
-  @storage = DatabasePersistence.new
+  @storage = DatabasePersistence.new(logger)
 end
 
 def load_list(id)
