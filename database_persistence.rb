@@ -57,8 +57,10 @@ class DatabasePersistence
   end
 
   def delete_list(id)
-    sql = "DELETE FROM lists WHERE id = $1"
-    query(sql, id)
+    todos_sql = "DELETE from todos WHERE list_id = $1"
+    query(todos_sql, id)
+    list_sql = "DELETE FROM lists WHERE id = $1"
+    query(list_sql, id)
   end
 
   def create_todo(list_id, todo)
