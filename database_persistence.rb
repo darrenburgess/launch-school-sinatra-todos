@@ -35,8 +35,8 @@ class DatabasePersistence
   end
 
   def create_list(name)
-    #id = next_id(all_lists)
-    #all_lists << { id: id, name: name, todos: [] }
+    sql = "INSERT INTO lists (name) VALUES ($1)"
+    query(sql, name)
   end
 
   def update_list_name(id, new_name)
