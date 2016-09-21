@@ -40,14 +40,15 @@ class DatabasePersistence
   end
 
   def update_list_name(id, new_name)
-    #list = find_list(id)
-    #list[:name] = new_name
+    sql = "UPDATE lists SET name = $1 WHERE id = $2"
+    query(sql, new_name, id)
   end
 
   def change_todo_status(list_id, todo_id)
-    #list = find_list(list_id)
-    #todo = list[:todos].find { |t| t[:id] == todo_id }
-    #todo[:completed] = todo[:completed] == true ? false : true
+    find_sql = "SELECT completed FROM todos WHERE id = $1"
+    completed = query(find_sql, todo_id).values.first.first == "f" 
+    update_sql = "UPDATE todos SET completed = $1 WHERE id = $2"
+    query(update_sql, completed, todo_id)
   end
 
   def complete_all_todos(list_id)
@@ -56,7 +57,8 @@ class DatabasePersistence
   end
 
   def delete_list(id)
-    #@lists.reject! { |list| list[:id] == id }
+    sql = "DELETE FROM lists WHERE id = $1"
+    query(sql, id)
   end
 
   def create_todo(list_id, todo)
