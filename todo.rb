@@ -31,7 +31,7 @@ helpers do
   end
 
   def complete?(list)
-    count_remaining_todos(list) == 0 && count_total_todos(list) > 0
+    list[:todos_count] > 0 && list[:todos_remaining_count] == 0
   end
 
   def count_remaining_todos(list)

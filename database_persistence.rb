@@ -23,14 +23,23 @@ class DatabasePersistence
   end
 
   def all_lists
-    list_sql = "SELECT * FROM lists"
+    list_sql = <<SQL
+            SELECT lists.*,
+            COUNT(NULLIF(todos.completed, true)) AS todos_remaining_count,
+            COUNT(todos.id) AS todos_count
+            FROM lists
+            JOIN todos ON todos.list_id = lists.id
+            GROUP BY lists.id
+            ORDER BY lists.name;
+SQL
 
     lists_result = query(list_sql)
 
     lists_result.map do |tuple|
-      list_id = tuple["id"].to_i
-      todos = find_todos(list_id)
-      {id: list_id, name: tuple["name"], todos: todos}
+      { id: tuple["id"].to_i, 
+        name: tuple["name"],
+        todos_count: tuple["todos_count"].to_i,
+        todos_remaining_count: tuple["todos_remaining_count"].to_i}
     end
   end
 
