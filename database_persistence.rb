@@ -14,12 +14,26 @@ class DatabasePersistence
 
   def find_list(list_id)
     sql = "SELECT * FROM lists WHERE id = $1"
+    sql = <<SQL
+            SELECT lists.*,
+            COUNT(NULLIF(todos.completed, true)) AS todos_remaining_count,
+            COUNT(todos.id) AS todos_count
+            FROM lists
+            JOIN todos ON todos.list_id = lists.id
+            WHERE lists.id = $1
+            GROUP BY lists.id
+SQL
+
     list_result = query(sql, list_id)
 
     tuple = list_result.first
 
     todos = find_todos(list_id)
-    {id: tuple["id"], name: tuple["name"], todos: todos}
+    { id: tuple["id"],
+      name: tuple["name"],
+      todos_count: tuple["todos_count"].to_i,
+      todos_remaining_count: tuple["todos_remaining_count"],
+      todos: todos}
   end
 
   def all_lists
