@@ -1,9 +1,10 @@
 require "sequel"
 
+DB = Sequel.connect("postgres://localhost/todos")
+
 class SequelPersistence
   def initialize(logger)
-    @db = Sequel.connect("postgres://localhost/todos")
-    @db.loggers << logger
+    DB.logger = logger
   end
 
   def find_list(list_id)
@@ -11,7 +12,7 @@ class SequelPersistence
   end
 
   def all_lists
-    @db[:lists].left_join(:todos, list_id: :id).
+    DB[:lists].left_join(:todos, list_id: :id).
       select_all(:lists).
       select_append do
         [ count(todos__id).as(todos_count),
@@ -22,20 +23,20 @@ class SequelPersistence
   end
 
   def create_list(name)
-    @db[:lists].insert(name: name)
+    DB[:lists].insert(name: name)
   end
 
   def update_list_name(id, new_name)
-    @db[:lists].where(lists__id: id).update(name: new_name)
+    DB[:lists].where(lists__id: id).update(name: new_name)
   end
 
   def delete_list(id)
-    @db[:todos].where(list_id: id).delete
-    @db[:lists].where(id: id).delete
+    DB[:todos].where(list_id: id).delete
+    DB[:lists].where(id: id).delete
   end
 
   def todos
-    @db[:todos]
+    DB[:todos]
   end
 
   def find_todos(list_id)
