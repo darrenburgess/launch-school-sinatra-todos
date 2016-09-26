@@ -72,7 +72,7 @@ end
 
 # show all lists
 get "/lists" do
-  @lists = @storage.all_lists
+  @lists = @storage.all_lists.to_a
   erb :lists
 end
 
@@ -87,7 +87,7 @@ get "/lists/:id" do
   @list = load_list(@list_id)
 
   @name = @list[:name]
-  @todos = @storage.find_todos(@list_id)
+  @todos = @storage.find_todos(@list_id).to_a
 
   erb :list, layout: :layout
 end
