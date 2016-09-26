@@ -6,11 +6,6 @@ class SequelPersistence
     @db.loggers << logger
   end
 
-  def query(statement, *params)
-    @logger.info "#{statement}: #{params}"
-    @db.exec_params(statement, params)
-  end
-
   def find_list(list_id)
     all_lists.first(lists__id: list_id)
   end
@@ -62,14 +57,5 @@ class SequelPersistence
 
   def complete_all_todos(list_id)
     todos.where(list_id: list_id).update(completed: true)
-  end
-
-  private
-
-  def tuple_to_list_hash(tuple)
-    { id: tuple["id"].to_i, 
-      name: tuple["name"],
-      todos_count: tuple["todos_count"].to_i,
-      todos_remaining_count: tuple["todos_remaining_count"].to_i}
   end
 end
