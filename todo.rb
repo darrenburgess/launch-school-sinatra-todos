@@ -1,7 +1,7 @@
 require "sinatra"
 require "sinatra/content_for"
 require "tilt/erubis"
-require_relative "database_persistence.rb"
+require_relative "sequel_persistence.rb"
 
 require "pry" if development?
 
@@ -13,7 +13,7 @@ end
 
 configure(:development) do
   require "sinatra/reloader"
-  also_reload "database_persistence.rb"
+  also_reload "sequel_persistence.rb"
 end
 
 helpers do
@@ -54,7 +54,7 @@ helpers do
 end
 
 before do
-  @storage = DatabasePersistence.new(logger)
+  @storage = SequelPersistence.new(logger)
 end
 
 def load_list(id)
